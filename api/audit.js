@@ -126,6 +126,7 @@ export default async function handler(req, res) {
         return arrs[0] ? { length: arrs[0].length, first: arrs[0][0] } : null;
       };
       result.debug = { tweetSample: firstArr(rawTweets.value), followerSample: firstArr(rawFollowers.value) };
+      if (body.debug) console.log('DEBUG_SAMPLE ' + JSON.stringify(result.debug).slice(0, 6000));
     }
     cache.set(key, { at: Date.now(), result });
     console.log(JSON.stringify({ evt: 'audit', handle: profile.handle, score: analysis.score, paid: result.totalPaidUsd, tx: receipts.map((r) => r.txHash) }));
