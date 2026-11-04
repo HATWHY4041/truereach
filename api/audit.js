@@ -116,7 +116,16 @@ export default async function handler(req, res) {
       tookMs: Date.now() - started,
       auditedAt: new Date().toISOString(),
     };
-    if (body.debug) result.debug = { rawProfile, rawTweets: rawTweets.value, rawFollowers: rawFollowers.value };
+    if (body.debug) {
+      const firstArr = (raw) => {
+        const arrs = [];
+        const walk = (v, d) => { if (!v || typeof v !== 'object' || d > 6) return; if (Array.isArray(v)) { if (v.length && typeof v[0] === 'object') arrs.push(v); v.forEach((x) => walk(x, d + 1)); } else Object.values(v).forEach((x) => walk(x, d + 1)); };
+        walk(raw, 0);
+        arrs.sort((a, b) => b.length - a.length);
+        return arrs[0] ? { length: arrs[0].length, first: arrs[0][0] } : null;
+      };
+      result.debug = { tweetSample: firstArr(rawTweets.value), followerSample: firstArr(rawFollowers.value) };
+    }
     cache.set(key, { at: Date.now(), result: { ...result, debug: undefined } });
     console.log(JSON.stringify({ evt: 'audit', handle: profile.handle, score: analysis.score, paid: result.totalPaidUsd, tx: receipts.map((r) => r.txHash) }));
     return res.status(200).json(result);
