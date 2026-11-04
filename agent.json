@@ -1,0 +1,13 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "TrueReach",
+  "description": "AI agent that audits a crypto project's X (Twitter) account — real engagement, reach, and bot signals in a follower sample — and pays for every data and inference call in stablecoins on Celo through buy (x402).",
+  "image": "https://truereach-nine.vercel.app/icon.svg",
+  "services": [
+    { "name": "web", "endpoint": "https://truereach-nine.vercel.app/" },
+    { "name": "api", "endpoint": "https://truereach-nine.vercel.app/api/audit", "version": "0.1.0" }
+  ],
+  "x402Support": false,
+  "active": true,
+  "supportedTrust": ["reputation"]
+}
