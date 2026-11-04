@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TrueReach — X Account Audit</title>
+<meta name="description" content="Is that crypto project's X audience real? TrueReach is an AI agent that audits engagement, fake followers and reach — paying for every data call onchain on Celo." />
+<meta property="og:title" content="TrueReach — is that X audience real?" />
+<meta property="og:description" content="An AI agent that audits a crypto project's X account and pays for every data call in stablecoins on Celo." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0b0c0a; --panel: #131511; --line: #262a22; --ink: #eef2e6; --mute: #8d9585;
+    --lime: #d8ff3d; --celo: #fcff52; --red: #ff5d5d; --green: #4ee39a; --amber: #ffb547;
+    --mono: 'JetBrains Mono', ui-monospace, monospace; --sans: 'Space Grotesk', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); }
+  body { min-height: 100vh; background-image: radial-gradient(circle at 80% -10%, #2a3313 0, transparent 45%), linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: auto, 44px 44px, 44px 44px; background-attachment: fixed; }
+  a { color: var(--lime); }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 28px 16px 80px; }
+  header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .logo { font-weight: 700; letter-spacing: -0.02em; font-size: 20px; display: flex; align-items: center; gap: 10px; }
+  .logo i { width: 14px; height: 14px; border: 2px solid var(--lime); border-radius: 50%; display: inline-block; box-shadow: 0 0 0 4px #d8ff3d22; }
+  .pill { font-family: var(--mono); font-size: 11px; color: var(--mute); border: 1px solid var(--line); background: var(--panel); padding: 6px 10px; border-radius: 99px; }
+  .pill b { color: var(--celo); font-weight: 600; }
+  h1 { font-size: clamp(36px, 7vw, 68px); line-height: 0.98; letter-spacing: -0.04em; margin: 56px 0 14px; max-width: 760px; }
+  h1 em { font-style: normal; color: var(--lime); }
+  .sub { color: var(--mute); font-size: 18px; max-width: 620px; line-height: 1.5; margin: 0 0 30px; }
+  form { display: flex; gap: 10px; flex-wrap: wrap; max-width: 640px; }
+  .field { flex: 1 1 280px; display: flex; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 0 14px; }
+  .field span { font-family: var(--mono); color: var(--mute); font-size: 18px; }
+  input { flex: 1; min-width: 0; background: transparent; border: 0; outline: 0; color: var(--ink); font: 500 18px var(--mono); padding: 16px 6px; }
+  .field:focus-within { border-color: var(--lime); }
+  button { background: var(--lime); color: #111; border: 0; border-radius: 12px; font: 700 16px var(--sans); padding: 0 22px; min-height: 56px; cursor: pointer; }
+  button:disabled { opacity: .5; cursor: wait; }
+  button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); min-height: 40px; font-size: 14px; padding: 0 14px; }
+  .hint { font-family: var(--mono); color: var(--mute); font-size: 12px; margin-top: 10px; }
+  .hint button { all: unset; cursor: pointer; color: var(--ink); text-decoration: underline dotted; margin-right: 8px; }
+  .steps { margin-top: 28px; display: none; font-family: var(--mono); font-size: 13px; }
+  .step { display: flex; gap: 10px; padding: 6px 0; color: var(--mute); }
+  .step.on { color: var(--ink); } .step.done { color: var(--green); }
+  .step .dot { width: 16px; }
+  .err { margin-top: 20px; color: var(--red); font-family: var(--mono); font-size: 13px; display: none; white-space: pre-wrap; }
+  #out { display: none; margin-top: 40px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+  .grid { display: grid; gap: 14px; }
+  .hero { display: grid; grid-template-columns: 180px 1fr; gap: 24px; align-items: center; }
+  @media (max-width: 640px) { .hero { grid-template-columns: 1fr; } }
+  .dial { position: relative; width: 170px; height: 170px; }
+  .dial svg { transform: rotate(-90deg); }
+  .dial .n { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+  .dial .n b { font-size: 54px; letter-spacing: -0.04em; line-height: 1; display: block; }
+  .dial .n small { font-family: var(--mono); color: var(--mute); font-size: 11px; }
+  .who { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
+  .who img { width: 44px; height: 44px; border-radius: 50%; background: var(--line); }
+  .who .nm { font-weight: 700; font-size: 20px; }
+  .who .hd { font-family: var(--mono); color: var(--mute); font-size: 13px; }
+  .grade { font-family: var(--mono); font-size: 12px; padding: 3px 8px; border-radius: 6px; margin-left: 8px; color: #111; }
+  .verdict { font-size: 17px; line-height: 1.55; margin: 6px 0 0; }
+  .tag { font-family: var(--mono); font-size: 10px; color: var(--mute); text-transform: uppercase; letter-spacing: .12em; margin-bottom: 10px; }
+  .pillars { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 640px) { .pillars { grid-template-columns: repeat(2, 1fr); } }
+  .bar { height: 6px; background: var(--line); border-radius: 9px; overflow: hidden; margin-top: 10px; }
+  .bar i { display: block; height: 100%; background: var(--lime); }
+  .pv { font-size: 26px; font-weight: 700; } .pv small { font-size: 13px; color: var(--mute); font-weight: 400; }
+  .metrics { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .m b { font-size: 22px; display: block; letter-spacing: -0.02em; } .m span { font-size: 12px; color: var(--mute); }
+  .two { grid-template-columns: 1fr 1fr; } @media (max-width: 640px) { .two { grid-template-columns: 1fr; } }
+  ul.flags { list-style: none; margin: 0; padding: 0; } ul.flags li { padding: 8px 0; border-top: 1px solid var(--line); font-size: 15px; line-height: 1.4; } ul.flags li:first-child { border-top: 0; }
+  .post { padding: 12px 0; border-top: 1px solid var(--line); } .post:first-of-type { border-top: 0; }
+  .post p { margin: 0 0 6px; font-size: 15px; line-height: 1.45; word-break: break-word; }
+  .post .st { font-family: var(--mono); font-size: 12px; color: var(--mute); }
+  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; }
+  td, th { text-align: left; padding: 9px 6px; border-top: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--mute); font-weight: 400; border-top: 0; }
+  .paid { color: var(--celo); }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+  .how { margin-top: 70px; grid-template-columns: repeat(3, 1fr); } @media (max-width: 720px) { .how { grid-template-columns: 1fr; } }
+  .how h3 { margin: 6px 0; font-size: 18px; } .how p { margin: 0; color: var(--mute); line-height: 1.5; font-size: 14px; }
+  .num { font-family: var(--mono); color: var(--lime); font-size: 12px; }
+  footer { margin-top: 50px; font-family: var(--mono); font-size: 12px; color: var(--mute); line-height: 1.8; }
+  .warn { font-family: var(--mono); font-size: 12px; color: var(--amber); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo"><i></i>TrueReach</div>
+    <div class="pill" id="netpill">agent wallet · <b>Celo</b></div>
+  </header>
+
+  <h1>Is that crypto project's audience <em>real?</em></h1>
+  <p class="sub">Paste any X account. TrueReach's agent buys the live data it needs, checks engagement, reach and a sample of followers for bot signals, and gives you a straight verdict. Every data call is paid onchain in stablecoins on Celo — you can verify each one.</p>
+
+  <form id="f">
+    <label class="field"><span>@</span><input id="h" name="handle" placeholder="project handle or x.com link" autocomplete="off" spellcheck="false" required /></label>
+    <button id="go" type="submit">Run audit</button>
+  </form>
+  <div class="hint">try: <button data-h="Celo">Celo</button><button data-h="CeloDevs">CeloDevs</button><button data-h="MiniPay">MiniPay</button> · free for you, the agent pays ≈ $0.03 per audit</div>
+
+  <div class="steps" id="steps">
+    <div class="step" data-s="0"><span class="dot">○</span>Buying profile data from X · $0.005</div>
+    <div class="step" data-s="1"><span class="dot">○</span>Buying recent posts · $0.005</div>
+    <div class="step" data-s="2"><span class="dot">○</span>Buying a follower sample · $0.005</div>
+    <div class="step" data-s="3"><span class="dot">○</span>Scoring and writing the verdict</div>
+  </div>
+  <div class="err" id="err"></div>
+
+  <section id="out"></section>
+
+  <section class="grid how">
+    <div class="card"><div class="num">01</div><h3>The agent pays as it goes</h3><p>No API keys, no subscriptions. Each request hits <a href="https://usebuy.ai" target="_blank" rel="noopener">buy</a>, gets a price (HTTP 402), signs a stablecoin payment and gets the data — settled on Celo in about a second.</p></div>
+    <div class="card"><div class="num">02</div><h3>It checks what matters</h3><p>Median engagement vs. follower count, how many followers actually see posts, posting rhythm, and a follower sample scanned for bot signals: no photo, never posted, brand-new, follow-spam.</p></div>
+    <div class="card"><div class="num">03</div><h3>Proof on every report</h3><p>Each audit lists the exact paid calls with their Celo transaction links, so you know the data was fetched live — not made up.</p></div>
+  </section>
+
+  <footer id="foot">
+    Built for the Celo “Agents on Open Rails” hackathon · Build with buy track<br />
+    <span id="walletline">loading agent info…</span>
+  </footer>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = (n) => n === null || n === undefined ? '—' : n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(n >= 1e4 ? 0 : 1) + 'K' : String(Math.round(n));
+const pct = (n, d = 2) => n === null || n === undefined ? '—' : n.toFixed(d) + '%';
+const color = (s) => s >= 80 ? 'var(--green)' : s >= 65 ? 'var(--lime)' : s >= 50 ? 'var(--amber)' : 'var(--red)';
+
+fetch('/api/audit').then((r) => r.json()).then((i) => {
+  $('#netpill').innerHTML = i.sandbox ? 'test mode · <b>Celo Sepolia</b>' : `agent wallet · <b>Celo mainnet</b> · pays in ${esc(i.token)}`;
+  $('#walletline').innerHTML = i.wallet ? `Agent wallet: <a href="${esc(i.walletUrl)}" target="_blank" rel="noopener">${esc(i.wallet)}</a>` : 'Running in test mode on Celo Sepolia with test USDC.';
+}).catch(() => {});
+
+document.querySelectorAll('.hint button').forEach((b) => b.addEventListener('click', () => { $('#h').value = b.dataset.h; $('#f').requestSubmit(); }));
+
+let timer;
+function progress(on) {
+  const steps = [...document.querySelectorAll('.step')];
+  steps.forEach((s) => { s.className = 'step'; s.querySelector('.dot').textContent = '○'; });
+  $('#steps').style.display = on ? 'block' : 'none';
+  clearInterval(timer);
+  if (!on) return;
+  let i = 0;
+  const tick = () => {
+    steps.forEach((s, k) => { s.className = 'step' + (k < i ? ' done' : k === i ? ' on' : ''); s.querySelector('.dot').textContent = k < i ? '✓' : k === i ? '◐' : '○'; });
+    if (i < steps.length - 1) i++;
+  };
+  tick(); timer = setInterval(tick, 2200);
+}
+
+$('#f').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const handle = $('#h').value.trim();
+  if (!handle) return;
+  $('#go').disabled = true; $('#err').style.display = 'none'; $('#out').style.display = 'none';
+  progress(true);
+  try {
+    const r = await fetch('/api/audit', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ handle }) });
+    const d = await r.json();
+    if (!r.ok) throw Object.assign(new Error(d.error || 'Audit failed'), { d });
+    render(d);
+    history.replaceState(null, '', '?h=' + encodeURIComponent(d.handle));
+  } catch (err) {
+    $('#err').textContent = err.message + (err.d?.receipts?.length ? `\n(${err.d.receipts.length} paid call(s) were made — see the agent wallet)` : '');
+    $('#err').style.display = 'block';
+  } finally {
+    progress(false); $('#go').disabled = false;
+  }
+});
+
+function render(d) {
+  const p = d.profile, m = d.metrics, c = color(d.score);
+  const C = 2 * Math.PI * 74, off = C * (1 - d.score / 100);
+  const share = `@${d.handle} scored ${d.score}/100 (grade ${d.grade}) on TrueReach — an AI agent that audits X audiences and pays for its data onchain on @Celo. Check any project:`;
+  const pillar = (k, label) => `<div class="card"><div class="tag">${label}</div><div class="pv">${d.pillars[k]}<small> / 25</small></div><div class="bar"><i style="width:${d.pillars[k] * 4}%"></i></div></div>`;
+  const post = (t) => `<div class="post"><p>${esc(t.text.slice(0, 260))}${t.text.length > 260 ? '…' : ''}</p><div class="st">♥ ${fmt(t.likes)} · ⟲ ${fmt(t.retweets)} · ↩ ${fmt(t.replies)}${t.views !== null ? ' · 👁 ' + fmt(t.views) : ''}${t.url ? ` · <a href="${esc(t.url)}" target="_blank" rel="noopener">open</a>` : ''}</div></div>`;
+  $('#out').innerHTML = `
+  <div class="grid">
+    <div class="card hero">
+      <div class="dial"><svg width="170" height="170" viewBox="0 0 170 170"><circle cx="85" cy="85" r="74" fill="none" stroke="var(--line)" stroke-width="12"/><circle cx="85" cy="85" r="74" fill="none" stroke="${c}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${off}"/></svg><div class="n"><div><b>${d.score}</b><small>TRUEREACH SCORE</small></div></div></div>
+      <div>
+        <div class="who">${p.avatar ? `<img src="${esc(p.avatar)}" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none'">` : ''}<div><div class="nm">${esc(p.name || d.handle)}<span class="grade" style="background:${c}">GRADE ${d.grade}</span></div><div class="hd"><a href="https://x.com/${esc(d.handle)}" target="_blank" rel="noopener">@${esc(d.handle)}</a> · ${fmt(m.followers)} followers${p.verified ? ' · verified' : ''}</div></div></div>
+        <div class="tag">${d.verdictSource === 'ai' ? 'AI verdict' : 'Verdict'}</div>
+        <p class="verdict">${esc(d.verdict)}</p>
+        <div class="row" style="margin-top:14px"><span class="hint" style="margin:0">${d.cached ? 'cached result · ' : ''}audited ${new Date(d.auditedAt).toLocaleString()}</span>
+        <a class="pill" style="text-decoration:none" target="_blank" rel="noopener" href="https://x.com/intent/post?text=${encodeURIComponent(share)}&url=${encodeURIComponent(location.origin + '/?h=' + d.handle)}">Share on X ↗</a></div>
+      </div>
+    </div>
+    <div class="grid pillars">${pillar('engagement', 'Engagement')}${pillar('reach', 'Reach')}${pillar('audience', 'Real audience')}${pillar('activity', 'Activity')}</div>
+    <div class="card"><div class="tag">Key numbers</div><div class="grid metrics">
+      <div class="m"><b>${pct(m.engagementRatePct, 3)}</b><span>median engagement / followers</span></div>
+      <div class="m"><b>${pct(m.viewRatePct, 1)}</b><span>median views / followers</span></div>
+      <div class="m"><b>${m.suspiciousFollowerPct === null ? '—' : Math.round(m.suspiciousFollowerPct) + '%'}</b><span>suspicious in follower sample (${m.followersSampled})</span></div>
+      <div class="m"><b>${fmt(m.medianLikes)}</b><span>median likes · ${m.postsAnalyzed} posts</span></div>
+      <div class="m"><b>${m.postsPerWeek ?? '—'}</b><span>posts per week</span></div>
+      <div class="m"><b>${m.accountAgeDays === null ? '—' : Math.round(m.accountAgeDays / 365 * 10) / 10 + 'y'}</b><span>account age</span></div>
+    </div></div>
+    <div class="grid two">
+      <div class="card"><div class="tag" style="color:var(--red)">Red flags</div><ul class="flags">${d.redFlags.length ? d.redFlags.map((x) => `<li>${esc(x)}</li>`).join('') : '<li style="color:var(--mute)">None found</li>'}</ul></div>
+      <div class="card"><div class="tag" style="color:var(--green)">Good signs</div><ul class="flags">${d.greenFlags.length ? d.greenFlags.map((x) => `<li>${esc(x)}</li>`).join('') : '<li style="color:var(--mute)">None found</li>'}</ul></div>
+    </div>
+    <div class="grid two">
+      <div class="card"><div class="tag">Top posts by engagement</div>${d.topPosts.length ? d.topPosts.map(post).join('') : '<p style="color:var(--mute)">No recent posts found.</p>'}</div>
+      <div class="card"><div class="tag">Suspicious followers (sample)</div>${d.suspiciousExamples.length ? `<ul class="flags">${d.suspiciousExamples.map((f) => `<li><span style="font-family:var(--mono)">@${esc(f.handle)}</span><br><span style="color:var(--mute);font-size:13px">${esc(f.flags.join(' · '))}</span></li>`).join('')}</ul>` : '<p style="color:var(--mute)">No suspicious accounts in the sample.</p>'}</div>
+    </div>
+    <div class="card"><div class="row"><div class="tag" style="margin:0">Paid onchain for this report</div><span class="paid" style="font-family:var(--mono);font-size:13px">$${d.totalPaidUsd.toFixed(4)} · ${d.sandbox ? 'Celo Sepolia (test)' : 'Celo mainnet'}</span></div>
+      <table><tr><th>Service</th><th>Paid</th><th>Transaction</th></tr>${d.receipts.map((r) => `<tr><td>${esc(r.service)}</td><td class="paid">$${r.amountUsd.toFixed(4)} ${esc(r.token)}</td><td>${r.explorerUrl ? `<a href="${esc(r.explorerUrl)}" target="_blank" rel="noopener">${esc(r.txHash.slice(0, 10))}…</a>` : esc(r.outcome)}</td></tr>`).join('')}</table>
+      ${d.cached ? '<div class="hint">This handle was audited in the last hour, so the saved report is shown and nothing new was paid.</div>' : ''}
+      ${d.warnings.length ? `<div class="warn" style="margin-top:10px">${d.warnings.map(esc).join('<br>')}</div>` : ''}
+    </div>
+  </div>`;
+  $('#out').style.display = 'block';
+  $('#out').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+const q = new URLSearchParams(location.search).get('h');
+if (q) { $('#h').value = q; $('#f').requestSubmit(); }
+</script>
+</body>
+</html>
