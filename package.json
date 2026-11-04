@@ -5,7 +5,7 @@
   "description": "TrueReach — an AI agent that audits a crypto project's X account (real engagement, fake-follower signals, top posts), paying for every data call in stablecoins on Celo via buy (x402).",
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": "22.x"
   },
   "scripts": {
     "test": "node scripts/test-analyze.js"

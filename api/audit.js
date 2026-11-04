@@ -29,6 +29,10 @@ function cleanHandle(h) {
 
 export default async function handler(req, res) {
   res.setHeader('cache-control', 'no-store');
+  if (req.method === 'GET' && req.query && req.query.handle) {
+    req.body = { handle: req.query.handle, debug: req.query.debug === '1' };
+    req.method = 'POST';
+  }
   if (req.method === 'GET') {
     const cfg = config();
     const addr = agentAccount().address;
