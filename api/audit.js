@@ -30,8 +30,11 @@ function cleanHandle(h) {
 export default async function handler(req, res) {
   res.setHeader('cache-control', 'no-store');
   if (req.method === 'GET' && req.query && req.query.handle) {
-    req.body = { handle: req.query.handle, debug: req.query.debug === '1' };
+    req.body = { handle: req.query.handle, debug: req.query.debug === '1', fresh: req.query.fresh === '1' };
     req.method = 'POST';
+    // Link-style GETs always answer 200 so the status is readable from any client.
+    const realStatus = res.status.bind(res);
+    res.status = (code) => { res.setHeader('x-audit-status', String(code)); return realStatus(200); };
   }
   if (req.method === 'GET') {
     const cfg = config();
