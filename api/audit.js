@@ -58,7 +58,8 @@ export default async function handler(req, res) {
   const key = handle.toLowerCase();
   const hit = cache.get(key);
   if (hit && Date.now() - hit.at < CACHE_MS && !body.fresh) {
-    return res.status(200).json({ ...hit.result, cached: true });
+    const { debug, ...rest } = hit.result;
+    return res.status(200).json({ ...rest, cached: true, debug: body.debug ? debug : undefined });
   }
 
   const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
@@ -116,7 +117,7 @@ export default async function handler(req, res) {
       tookMs: Date.now() - started,
       auditedAt: new Date().toISOString(),
     };
-    if (body.debug) {
+    {
       const firstArr = (raw) => {
         const arrs = [];
         const walk = (v, d) => { if (!v || typeof v !== 'object' || d > 6) return; if (Array.isArray(v)) { if (v.length && typeof v[0] === 'object') arrs.push(v); v.forEach((x) => walk(x, d + 1)); } else Object.values(v).forEach((x) => walk(x, d + 1)); };
@@ -126,7 +127,7 @@ export default async function handler(req, res) {
       };
       result.debug = { tweetSample: firstArr(rawTweets.value), followerSample: firstArr(rawFollowers.value) };
     }
-    cache.set(key, { at: Date.now(), result: { ...result, debug: undefined } });
+    cache.set(key, { at: Date.now(), result });
     console.log(JSON.stringify({ evt: 'audit', handle: profile.handle, score: analysis.score, paid: result.totalPaidUsd, tx: receipts.map((r) => r.txHash) }));
     return res.status(200).json(result);
   } catch (e) {
